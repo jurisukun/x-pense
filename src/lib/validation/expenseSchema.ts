@@ -10,3 +10,7 @@ export const expenseSchema = z.object({
 });
 
 export type ExpenseSchemaType = z.infer<typeof expenseSchema>;
+
+export const updateExpenseSchema = expenseSchema.extend({
+  id: z.string().min(1, { message: "Entry id is required" }),
+});
