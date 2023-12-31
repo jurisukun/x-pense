@@ -38,6 +38,8 @@ import LoadingButton from "./loading-button";
 import { useRouter } from "next/navigation";
 import { Expense } from "@prisma/client";
 
+import DeleteLoadingButton from "./delete-loading-button";
+
 type AddEntrDialogProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -81,6 +83,18 @@ export default function AddEntryDialog({
     } catch (error) {
       alert("Error: " + error);
     }
+  }
+
+  async function onDelete({ id }: { id: string }) {
+    const response = await fetch(`/api/expenses/`, {
+      method: "DELETE",
+      body: JSON.stringify({ id }),
+    });
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    router.refresh();
+    setOpen(false);
   }
 
   return (
@@ -222,13 +236,26 @@ export default function AddEntryDialog({
               />
 
               <DatePickerForm form={form} />
-              <DialogFooter>
-                <LoadingButton
-                  type="submit"
-                  loading={form.formState.isSubmitting}
-                >
-                  {expenseData ? "Save Changes" : "Submit"}
-                </LoadingButton>
+              <DialogFooter className="flex items-center">
+                <div className="flex w-full justify-end gap-5">
+                  {expenseData && (
+                    <DeleteLoadingButton
+                      deletefunction={() => onDelete({ id: expenseData?.id })}
+                      type="button"
+                      variant={"outline"}
+                      className="border-red-500 text-red-500 hover:bg-red-400 hover:text-white"
+                    >
+                      Delete
+                    </DeleteLoadingButton>
+                  )}
+                  <LoadingButton
+                    className=" hover:bg-slate-700"
+                    type="submit"
+                    loading={form.formState.isSubmitting}
+                  >
+                    {expenseData ? "Save Changes" : "Submit"}
+                  </LoadingButton>
+                </div>
               </DialogFooter>
             </form>
           </Form>

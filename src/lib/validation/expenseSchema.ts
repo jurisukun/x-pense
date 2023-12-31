@@ -14,3 +14,7 @@ export type ExpenseSchemaType = z.infer<typeof expenseSchema>;
 export const updateExpenseSchema = expenseSchema.extend({
   id: z.string().min(1, { message: "Entry id is required" }),
 });
+
+export const deleteExpenseSchema = z.object({
+  id: z.string().min(1, { message: "Entry id is required" }),
+});
