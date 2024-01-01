@@ -25,3 +25,25 @@ model Expense{
 
 @@map("expenses")
 }
+
+model Category{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  subCategory SubCategory[]
+  userId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+@@map("categories")
+}
+
+model SubCategory{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId String @db.ObjectId  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+@@map("subcategories")
+}

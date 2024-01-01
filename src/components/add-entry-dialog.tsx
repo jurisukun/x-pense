@@ -39,6 +39,7 @@ import { useRouter } from "next/navigation";
 import { Expense } from "@prisma/client";
 
 import DeleteLoadingButton from "./delete-loading-button";
+import AddCategorySubcategory from "./add-category-subcategory";
 
 type AddEntrDialogProps = {
   open: boolean;
@@ -100,7 +101,7 @@ export default function AddEntryDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-[max(300px,45%)] scale-90 rounded-md  sm:scale-100">
+        <DialogContent className="w-[320px] scale-90 rounded-md sm:w-[400px]  sm:scale-100">
           <DialogHeader>
             <DialogTitle>
               {expenseData ? "Edit Entry" : "New Entry"}
@@ -175,32 +176,36 @@ export default function AddEntryDialog({
                     <FormItem>
                       <FormLabel>Category </FormLabel>
                       <FormControl>
-                        <Select
-                          {...field}
-                          onValueChange={(e) => {
-                            console.log(e);
-                            field.onChange(e);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.map((category, key) => {
-                              return (
-                                <SelectItem key={key} value={category.name}>
-                                  {category.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
+                        <div className="flex flex-row items-center justify-center">
+                          <Select
+                            {...field}
+                            onValueChange={(e) => {
+                              console.log(e);
+                              field.onChange(e);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {categories.map((category, key) => {
+                                return (
+                                  <SelectItem key={key} value={category.name}>
+                                    {category.name}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                          <AddCategorySubcategory datafield="category" />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   );
                 }}
               />
+
               <FormField
                 name="subCategory"
                 control={form.control}
@@ -208,27 +213,32 @@ export default function AddEntryDialog({
                   return (
                     <FormItem>
                       <FormLabel>Subcategory </FormLabel>
+
                       <FormControl>
-                        <Select
-                          {...field}
-                          onValueChange={(e) => {
-                            field.onChange(e);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select subcategory (optional)" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.map((category, key) => {
-                              return (
-                                <SelectItem key={key} value={category.name}>
-                                  {category.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
+                        <div className="flex flex-row items-center justify-center">
+                          <Select
+                            {...field}
+                            onValueChange={(e) => {
+                              field.onChange(e);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select subcategory (optional)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {categories.map((category, key) => {
+                                return (
+                                  <SelectItem key={key} value={category.name}>
+                                    {category.name}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                          <AddCategorySubcategory datafield="subcategory" />
+                        </div>
                       </FormControl>
+
                       <FormMessage />
                     </FormItem>
                   );
@@ -243,13 +253,13 @@ export default function AddEntryDialog({
                       deletefunction={() => onDelete({ id: expenseData?.id })}
                       type="button"
                       variant={"outline"}
-                      className="border-red-500 text-red-500 hover:bg-red-400 hover:text-white"
+                      className="border-red-400 text-red-400 hover:bg-red-400 hover:text-white"
                     >
                       Delete
                     </DeleteLoadingButton>
                   )}
                   <LoadingButton
-                    className=" hover:bg-slate-700"
+                    className=" hover:bg-slate-500"
                     type="submit"
                     loading={form.formState.isSubmitting}
                   >

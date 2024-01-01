@@ -18,3 +18,11 @@ export const updateExpenseSchema = expenseSchema.extend({
 export const deleteExpenseSchema = z.object({
   id: z.string().min(1, { message: "Entry id is required" }),
 });
+
+export const categorySchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+});
+
+export const subCategorySchema = categorySchema.extend({
+  category: z.string().min(1, { message: "Category is required" }),
+});
