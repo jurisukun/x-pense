@@ -39,20 +39,24 @@ import { useRouter } from "next/navigation";
 import { Expense } from "@prisma/client";
 
 import DeleteLoadingButton from "./delete-loading-button";
-import AddCategorySubcategory from "./add-category-subcategory";
+import AddCategorySubcategory, {
+  AddSubcategory,
+} from "./add-category-subcategory";
+import { userCategoryTypes } from "./expense-entry";
+import { useState } from "react";
 
 type AddEntrDialogProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   expenseData?: Expense;
+  userCategories: userCategoryTypes;
 };
-
-const categories = [{ name: "Food" }, { name: "Transportation" }];
 
 export default function AddEntryDialog({
   open,
   setOpen,
   expenseData,
+  userCategories,
 }: AddEntrDialogProps) {
   const router = useRouter();
   const form = useForm<ExpenseSchemaType>({
@@ -66,6 +70,13 @@ export default function AddEntryDialog({
       date: expenseData?.date ?? new Date(),
     },
   });
+
+  const categories = [{ name: "Food" }, { name: "Transportation" }].concat(
+    userCategories,
+  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    null | userCategoryTypes[number]
+  >(null);
 
   async function onSubmit(input: ExpenseSchemaType) {
     try {
@@ -180,14 +191,18 @@ export default function AddEntryDialog({
                           <Select
                             {...field}
                             onValueChange={(e) => {
-                              console.log(e);
                               field.onChange(e);
+                              userCategories.find((category) => {
+                                if (category.name === e) {
+                                  setSelectedCategory(category);
+                                }
+                              });
                             }}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select category" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="max-h-[200px]">
                               {categories.map((category, key) => {
                                 return (
                                   <SelectItem key={key} value={category.name}>
@@ -197,7 +212,7 @@ export default function AddEntryDialog({
                               })}
                             </SelectContent>
                           </Select>
-                          <AddCategorySubcategory datafield="category" />
+                          <AddCategorySubcategory router={router} />
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -226,16 +241,21 @@ export default function AddEntryDialog({
                               <SelectValue placeholder="Select subcategory (optional)" />
                             </SelectTrigger>
                             <SelectContent>
-                              {categories.map((category, key) => {
-                                return (
-                                  <SelectItem key={key} value={category.name}>
-                                    {category.name}
-                                  </SelectItem>
-                                );
-                              })}
+                              {selectedCategory?.subCategory.map(
+                                (category, key) => {
+                                  return (
+                                    <SelectItem key={key} value={category.name}>
+                                      {category.name}
+                                    </SelectItem>
+                                  );
+                                },
+                              )}
                             </SelectContent>
                           </Select>
-                          <AddCategorySubcategory datafield="subcategory" />
+                          <AddSubcategory
+                            router={router}
+                            underCategory={selectedCategory}
+                          />
                         </div>
                       </FormControl>
 

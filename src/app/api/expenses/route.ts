@@ -16,7 +16,6 @@ export async function POST(req: Request) {
       date: new Date(body.date),
     });
     if (!parseBody.success) {
-      console.error(parseBody.error);
       return Response.json({ error: "Invalid input" }, { status: 400 });
     }
 
@@ -40,7 +39,6 @@ export async function POST(req: Request) {
     });
     return Response.json(expense, { status: 201 });
   } catch (error) {
-    console.error(error);
     return Response.json({ error: "Server Error" }, { status: 500 });
   }
 }
@@ -54,7 +52,6 @@ export async function PUT(req: Request) {
       date: new Date(body.date),
     });
     if (!parseBody.success) {
-      console.error(parseBody.error);
       return Response.json({ error: "Invalid input" }, { status: 400 });
     }
 
@@ -89,7 +86,6 @@ export async function PUT(req: Request) {
     }
     return Response.json(updateExpense, { status: 200 });
   } catch (error) {
-    console.error(error);
     return Response.json({ error: "Server Error" }, { status: 500 });
   }
 }
@@ -131,7 +127,6 @@ export async function DELETE(req: Request) {
       { status: 200 },
     );
   } catch (error) {
-    console.error(error);
     return Response.json({ error: "Server Error" }, { status: 500 });
   }
 }

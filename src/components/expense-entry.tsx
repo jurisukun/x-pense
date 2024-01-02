@@ -5,10 +5,18 @@ import { format } from "date-fns";
 import AddEntryDialog from "./add-entry-dialog";
 import { useState } from "react";
 
+export type userCategoryTypes = {
+  id: string;
+  name: string;
+  subCategory: { name: string }[];
+}[];
+
 export default function ExpenseEntry({
   expenseData,
+  userCategories,
 }: {
   expenseData: Expense;
+  userCategories: userCategoryTypes;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -42,7 +50,14 @@ export default function ExpenseEntry({
           </div>
         </div>
       </div>
-      <AddEntryDialog open={open} setOpen={setOpen} expenseData={expenseData} />
+      {open && (
+        <AddEntryDialog
+          open={open}
+          setOpen={setOpen}
+          expenseData={expenseData}
+          userCategories={userCategories}
+        />
+      )}
     </>
   );
 }

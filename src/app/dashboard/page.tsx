@@ -12,6 +12,18 @@ export default async function Dashboard() {
     },
   });
 
+  const allCategories = await prisma.category.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      userId: true,
+      subCategory: true,
+    },
+  });
+
   return (
     <div className="h-full">
       <div className="flex  w-screen flex-col items-center justify-center gap-3">
@@ -19,7 +31,11 @@ export default async function Dashboard() {
       </div>
       <div className=" space-y-3  border-red-300 p-3">
         {allEntries.map((entry, key) => (
-          <ExpenseEntry key={key} expenseData={entry} />
+          <ExpenseEntry
+            key={key}
+            expenseData={entry}
+            userCategories={allCategories}
+          />
         ))}
       </div>
     </div>
