@@ -27,7 +27,7 @@ export default async function Dashboard() {
   return (
     <div className="h-full">
       <div className="flex  w-screen flex-col items-center justify-center gap-3">
-        <NavBar />
+        <NavBar userCategories={allCategories} />
       </div>
       <div className=" space-y-3  border-red-300 p-3">
         {allEntries.map((entry, key) => (

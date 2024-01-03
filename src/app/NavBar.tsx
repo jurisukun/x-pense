@@ -8,8 +8,13 @@ import { useState } from "react";
 import AddEntryDialog from "@/components/add-entry-dialog";
 import ModeToggle from "@/components/theme-toggle";
 import { Plus } from "lucide-react";
+import { userCategoryTypes } from "@/components/expense-entry";
 
-export default function NavBar() {
+export default function NavBar({
+  userCategories,
+}: {
+  userCategories: userCategoryTypes;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -51,7 +56,11 @@ export default function NavBar() {
           </span>
         </div>
       </div>
-      <AddEntryDialog open={open} setOpen={setOpen} />
+      <AddEntryDialog
+        open={open}
+        setOpen={setOpen}
+        userCategories={userCategories}
+      />
     </>
   );
 }

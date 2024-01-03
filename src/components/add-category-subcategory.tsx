@@ -29,12 +29,11 @@ export default function AddCategorySubcategory({
 
       if (!response?.ok) {
         const error = await response.json();
-        throw new Error(error?.message || "Something went wrong");
+        throw new Error(error?.message || "Something went wrong, try again");
       }
       setOpen(false);
       router.refresh();
     } catch (error) {
-      console.log(error);
       alert(error);
     }
   }
@@ -73,7 +72,7 @@ export function AddSubcategory({
   underCategory?: userCategoryTypes[number] | null;
   router: AppRouterInstance;
 }) {
-  const [category, setCategory] = useState("");
+  const [subcategory, setSubCategory] = useState("");
   const [open, setOpen] = useState(true);
 
   async function saveCategory() {
@@ -81,13 +80,14 @@ export function AddSubcategory({
     try {
       response = await fetch("api/subcategory", {
         method: "POST",
-        body: category
-          ? JSON.stringify({ name: category, categoryId: underCategory?.id })
+        body: subcategory
+          ? JSON.stringify({ name: subcategory, categoryId: underCategory?.id })
           : null,
       });
 
       if (!response?.ok) {
-        throw new Error("Something went wrong");
+        let error = await response.json();
+        throw new Error(error?.message || "Something went wrong");
       }
       setOpen(false);
       router.refresh();
@@ -108,12 +108,16 @@ export function AddSubcategory({
             <Input
               placeholder={`Subcategory name`}
               onChange={(e) => {
-                setCategory(e.target.value);
+                setSubCategory(e.target.value);
               }}
             />
           </div>
           <div className="flex items-center justify-center">
-            <Button onClick={saveCategory} className="w-full bg-slate-800">
+            <Button
+              onClick={saveCategory}
+              className="w-full bg-slate-800"
+              disabled={!underCategory}
+            >
               Add
             </Button>
           </div>

@@ -43,7 +43,7 @@ import AddCategorySubcategory, {
   AddSubcategory,
 } from "./add-category-subcategory";
 import { userCategoryTypes } from "./expense-entry";
-import { useState } from "react";
+import { use, useState } from "react";
 
 type AddEntrDialogProps = {
   open: boolean;
@@ -71,12 +71,18 @@ export default function AddEntryDialog({
     },
   });
 
-  const categories = [{ name: "Food" }, { name: "Transportation" }].concat(
-    userCategories,
-  );
+  const categories = userCategories;
+
+  let defaultCategory = expenseData?.category
+    ? categories.find((category) => {
+        if (category.name === expenseData.category) {
+          return category;
+        }
+      })
+    : null;
   const [selectedCategory, setSelectedCategory] = useState<
-    null | userCategoryTypes[number]
-  >(null);
+    userCategoryTypes[number] | null | undefined
+  >(defaultCategory);
 
   async function onSubmit(input: ExpenseSchemaType) {
     try {
@@ -189,6 +195,7 @@ export default function AddEntryDialog({
                       <FormControl>
                         <div className="flex flex-row items-center justify-center">
                           <Select
+                            defaultValue={expenseData?.category ?? ""}
                             {...field}
                             onValueChange={(e) => {
                               field.onChange(e);
@@ -199,17 +206,24 @@ export default function AddEntryDialog({
                               });
                             }}
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select category" />
+                            <SelectTrigger disabled={!categories.length}>
+                              <SelectValue
+                                placeholder={
+                                  categories.length > 0
+                                    ? "Select category"
+                                    : "Create a category first"
+                                }
+                              />
                             </SelectTrigger>
                             <SelectContent className="max-h-[200px]">
-                              {categories.map((category, key) => {
-                                return (
-                                  <SelectItem key={key} value={category.name}>
-                                    {category.name}
-                                  </SelectItem>
-                                );
-                              })}
+                              {categories.length > 0 &&
+                                categories.map((category, key) => {
+                                  return (
+                                    <SelectItem key={key} value={category.name}>
+                                      {category.name}
+                                    </SelectItem>
+                                  );
+                                })}
                             </SelectContent>
                           </Select>
                           <AddCategorySubcategory router={router} />
@@ -232,25 +246,37 @@ export default function AddEntryDialog({
                       <FormControl>
                         <div className="flex flex-row items-center justify-center">
                           <Select
+                            defaultValue={expenseData?.subCategory ?? ""}
                             {...field}
                             onValueChange={(e) => {
                               field.onChange(e);
                             }}
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select subcategory (optional)" />
+                            <SelectTrigger
+                              disabled={
+                                !categories.length ||
+                                !selectedCategory?.subCategory.length
+                              }
+                            >
+                              <SelectValue placeholder="Select/create subcategory (optional)" />
                             </SelectTrigger>
-                            <SelectContent>
-                              {selectedCategory?.subCategory.map(
-                                (category, key) => {
-                                  return (
-                                    <SelectItem key={key} value={category.name}>
-                                      {category.name}
-                                    </SelectItem>
-                                  );
-                                },
-                              )}
-                            </SelectContent>
+
+                            {selectedCategory && (
+                              <SelectContent>
+                                {selectedCategory?.subCategory.map(
+                                  (category, key) => {
+                                    return (
+                                      <SelectItem
+                                        key={key}
+                                        value={category.name}
+                                      >
+                                        {category.name}
+                                      </SelectItem>
+                                    );
+                                  },
+                                )}
+                              </SelectContent>
+                            )}
                           </Select>
                           <AddSubcategory
                             router={router}
