@@ -56,11 +56,13 @@ export default function NavBar({
           </span>
         </div>
       </div>
-      <AddEntryDialog
-        open={open}
-        setOpen={setOpen}
-        userCategories={userCategories}
-      />
+      {open && (
+        <AddEntryDialog
+          open={open}
+          setOpen={setOpen}
+          userCategories={userCategories}
+        />
+      )}
     </>
   );
 }

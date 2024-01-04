@@ -7,10 +7,11 @@ import { Plus } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { userCategoryTypes } from "./expense-entry";
+import { sub } from "date-fns";
 
 export default function AddCategorySubcategory({
   router,
@@ -68,14 +69,18 @@ export default function AddCategorySubcategory({
 export function AddSubcategory({
   router,
   underCategory,
+  setDefaultSubCategory,
 }: {
   underCategory?: userCategoryTypes[number] | null;
   router: AppRouterInstance;
+  setDefaultSubCategory: Dispatch<
+    SetStateAction<{ name: string }[] | undefined>
+  >;
 }) {
   const [subcategory, setSubCategory] = useState("");
   const [open, setOpen] = useState(true);
 
-  async function saveCategory() {
+  async function saveSubCategory() {
     let response;
     try {
       response = await fetch("api/subcategory", {
@@ -90,6 +95,9 @@ export function AddSubcategory({
         throw new Error(error?.message || "Something went wrong");
       }
       setOpen(false);
+      setDefaultSubCategory((prev) => {
+        return [...prev!, { name: subcategory }];
+      });
       router.refresh();
     } catch (error) {
       throw new Error("Error");
@@ -114,7 +122,7 @@ export function AddSubcategory({
           </div>
           <div className="flex items-center justify-center">
             <Button
-              onClick={saveCategory}
+              onClick={saveSubCategory}
               className="w-full bg-slate-800"
               disabled={!underCategory}
             >
