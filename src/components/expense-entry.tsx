@@ -4,6 +4,7 @@ import { Expense } from "@prisma/client";
 import { format } from "date-fns";
 import AddEntryDialog from "./add-entry-dialog";
 import { useState } from "react";
+import { userSubCategoryTypes } from "@/app/dashboard/page";
 
 export type userCategoryTypes = {
   id: string;
@@ -14,9 +15,11 @@ export type userCategoryTypes = {
 export default function ExpenseEntry({
   expenseData,
   userCategories,
+  userSubCategories,
 }: {
   expenseData: Expense;
   userCategories: userCategoryTypes;
+  userSubCategories: userSubCategoryTypes;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -56,6 +59,7 @@ export default function ExpenseEntry({
           setOpen={setOpen}
           expenseData={expenseData}
           userCategories={userCategories}
+          userSubCategories={userSubCategories}
         />
       )}
     </>

@@ -3,6 +3,17 @@ import { auth } from "@clerk/nextjs";
 import NavBar from "../NavBar";
 import ExpenseEntry from "@/components/expense-entry";
 
+export type userSubCategoryTypes = {
+  id: string;
+  name: string;
+  userId: string;
+  categoryId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}[];
+
+import { ToastDestructive } from "@/components/toast-button";
+
 export default async function Dashboard() {
   const { userId } = auth();
   if (!userId) throw new Error("Not Authenticated");
@@ -24,10 +35,19 @@ export default async function Dashboard() {
     },
   });
 
+  const allSubCategories = await prisma.subCategory.findMany({
+    where: {
+      userId,
+    },
+  });
+
   return (
     <div className="h-full">
       <div className="flex  w-screen flex-col items-center justify-center gap-3">
-        <NavBar userCategories={allCategories} />
+        <NavBar
+          userCategories={allCategories}
+          userSubCategories={allSubCategories}
+        />
       </div>
       <div className=" space-y-3  border-red-300 p-3">
         {allEntries.map((entry, key) => (
@@ -35,6 +55,7 @@ export default async function Dashboard() {
             key={key}
             expenseData={entry}
             userCategories={allCategories}
+            userSubCategories={allSubCategories}
           />
         ))}
       </div>

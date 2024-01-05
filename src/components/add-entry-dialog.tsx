@@ -44,13 +44,15 @@ import AddCategorySubcategory, {
 } from "./add-category-subcategory";
 import { userCategoryTypes } from "./expense-entry";
 import { useEffect, useState } from "react";
-import { set } from "date-fns";
+
+import { userSubCategoryTypes } from "@/app/dashboard/page";
 
 type AddEntrDialogProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   expenseData?: Expense;
   userCategories: userCategoryTypes;
+  userSubCategories: userSubCategoryTypes;
 };
 
 export default function AddEntryDialog({
@@ -58,6 +60,7 @@ export default function AddEntryDialog({
   setOpen,
   expenseData,
   userCategories,
+  userSubCategories,
 }: AddEntrDialogProps) {
   const router = useRouter();
   const form = useForm<ExpenseSchemaType>({
@@ -84,9 +87,14 @@ export default function AddEntryDialog({
   const [selectedCategory, setSelectedCategory] = useState<
     userCategoryTypes[number] | null | undefined
   >(defaultCategory);
-  const [defaultSubCategory, setDefaultSubCategory] = useState<
-    { name: string }[] | undefined | Array<{ name: string }>
-  >(defaultCategory?.subCategory || selectedCategory?.subCategory);
+
+  const subcategories = selectedCategory
+    ? userSubCategories.filter((subcategory) => {
+        if (subcategory.categoryId === selectedCategory.id) {
+          return subcategory;
+        }
+      })
+    : [];
 
   async function onSubmit(input: ExpenseSchemaType) {
     try {
@@ -119,11 +127,6 @@ export default function AddEntryDialog({
     setOpen(false);
   }
 
-  useEffect(() => {
-    setDefaultSubCategory(selectedCategory?.subCategory);
-  }, [selectedCategory, categories]);
-
-  console.log(defaultSubCategory);
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -211,7 +214,6 @@ export default function AddEntryDialog({
                               userCategories.find((category) => {
                                 if (category.name === e) {
                                   setSelectedCategory(category);
-                                  setDefaultSubCategory(category.subCategory);
                                 }
                               });
                             }}
@@ -265,29 +267,27 @@ export default function AddEntryDialog({
                             <SelectTrigger
                               disabled={
                                 !categories.length ||
-                                !selectedCategory?.subCategory.length ||
+                                !subcategories.length ||
                                 !selectedCategory
                               }
                             >
                               <SelectValue placeholder="Select/create subcategory (optional)" />
                             </SelectTrigger>
 
-                            {defaultSubCategory && (
-                              <SelectContent>
-                                {defaultSubCategory?.map((category, key) => {
+                            <SelectContent>
+                              {subcategories.length &&
+                                subcategories?.map((category, key) => {
                                   return (
                                     <SelectItem key={key} value={category.name}>
                                       {category.name}
                                     </SelectItem>
                                   );
                                 })}
-                              </SelectContent>
-                            )}
+                            </SelectContent>
                           </Select>
                           <AddSubcategory
                             router={router}
                             underCategory={selectedCategory}
-                            setDefaultSubCategory={setDefaultSubCategory}
                           />
                         </div>
                       </FormControl>

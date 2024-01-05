@@ -9,11 +9,14 @@ import AddEntryDialog from "@/components/add-entry-dialog";
 import ModeToggle from "@/components/theme-toggle";
 import { Plus } from "lucide-react";
 import { userCategoryTypes } from "@/components/expense-entry";
+import { userSubCategoryTypes } from "./dashboard/page";
 
 export default function NavBar({
   userCategories,
+  userSubCategories,
 }: {
   userCategories: userCategoryTypes;
+  userSubCategories: userSubCategoryTypes;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -61,6 +64,7 @@ export default function NavBar({
           open={open}
           setOpen={setOpen}
           userCategories={userCategories}
+          userSubCategories={userSubCategories}
         />
       )}
     </>
